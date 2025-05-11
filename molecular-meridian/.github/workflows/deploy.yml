@@ -1,32 +1,29 @@
-name: Deploy to GitHub Pages
-
+name: Deploy Astro to GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 permissions:
   contents: write
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
         with:
-          node-version: 20
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build site
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
+          fetch-depth: 0          # full history
+          submodules: false       # skip any submodules
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run build      # produces dist/
+      - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          publish_branch: gh-pages
+          # ensure Pages doesn’t run Jekyll
+          nojekyll: true
