@@ -1,5 +1,5 @@
+# .github/workflows/deploy.yml
 name: Build & Deploy Astro to GitHub Pages
-
 on:
   push:
     branches: [ main ]
@@ -11,7 +11,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout      
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -25,10 +25,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build Astro site
         run: npm run build
 
-      - name: Copy to docs/
+      - name: Prepare docs folder
         run: |
           rm -rf docs
           mkdir docs
@@ -40,5 +40,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs .nojekyll
-          git commit -m "ci: deploy to /docs [skip ci]" || echo "No changes"
+          git commit -m "ci: deploy to /docs [skip ci]" || echo "No changes to commit"
           git push origin main
